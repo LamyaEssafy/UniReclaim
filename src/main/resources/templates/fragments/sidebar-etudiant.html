@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="sidebar" class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a th:href="@{/etudiant/dashboard}" class="sidebar-brand">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="sidebar-brand-text">UniReclaim</span>
+        </a>
+        <button class="sidebar-close-btn d-lg-none" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-menu-wrapper">
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a th:href="@{/etudiant/dashboard}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/dashboard') ? 'active' : ''}">
+                    <i class="fas fa-tachometer-alt sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Tableau de bord</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/etudiant/reclamations}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/reclamations') and !#strings.contains(currentURI, '/nouvelle') ? 'active' : ''}">
+                    <i class="fas fa-clipboard-list sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mes réclamations</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/etudiant/reclamations/nouvelle}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/nouvelle') ? 'active' : ''}">
+                    <i class="fas fa-plus-circle sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Nouvelle réclamation</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a th:href="@{/etudiant/profil}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/profil') ? 'active' : ''}">
+                    <i class="fas fa-user-circle sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mon Profil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+    <form th:action="@{/logout}" method="post" style="margin:0;">
+        <button type="submit"
+                class="sidebar-menu-link sidebar-logout-link"
+                style="width:100%;
+                       border:none;
+                       background:none;
+                       display:flex;
+                       align-items:center;
+                       text-align:left;
+                       cursor:pointer;">
+
+            <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
+            <span class="sidebar-menu-text">Déconnexion</span>
+
+        </button>
+    </form>
+</li>
+        </ul>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="sidebar-user-avatar" th:text="${currentUser.initiale}">E</div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Étudiant</div>
+            <div class="sidebar-user-role">Étudiant</div>
+        </div>
+    </div>
+</div>
+
+</html>

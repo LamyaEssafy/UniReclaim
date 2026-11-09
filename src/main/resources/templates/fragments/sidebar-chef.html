@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<div th:fragment="sidebar" class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a th:href="@{/chef/dashboard}" class="sidebar-brand">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="sidebar-brand-text">UniReclaim</span>
+        </a>
+        <button class="sidebar-close-btn d-lg-none" onclick="toggleSidebar()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <div class="sidebar-menu-wrapper">
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chef/dashboard}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/dashboard') ? 'active' : ''}">
+                    <i class="fas fa-tachometer-alt sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Tableau de bord</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chef/reclamations}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/reclamations') ? 'active' : ''}">
+                    <i class="fas fa-folder-open sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Réclamations du département</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chef/statistiques}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/statistiques') ? 'active' : ''}">
+                    <i class="fas fa-chart-pie sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Statistiques</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-divider"></div>
+
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a th:href="@{/chef/profil}" class="sidebar-menu-link"
+                   th:classappend="${#strings.contains(currentURI, '/profil') ? 'active' : ''}">
+                    <i class="fas fa-user-circle sidebar-menu-icon"></i>
+                    <span class="sidebar-menu-text">Mon Profil</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="sidebar-menu-link sidebar-logout-link"
+                            style="width: 100%; border: none; background: none; display: flex; align-items: center; text-align: left; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
+                        <span class="sidebar-menu-text">Déconnexion</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="sidebar-user">
+        <div class="sidebar-user-avatar" th:text="${currentUser.initiale}">C</div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name" th:text="${currentUser.prenom + ' ' + currentUser.nom}">Chef Département</div>
+            <div class="sidebar-user-role">Chef de Département</div>
+        </div>
+    </div>
+</div>
+
+</html>

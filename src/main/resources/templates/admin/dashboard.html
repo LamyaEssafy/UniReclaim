@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - UniReclaim</title>
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/animations.css}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div th:replace="~{fragments/sidebar-admin :: sidebar}"></div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div th:replace="~{fragments/header :: header('Tableau de bord Administrateur')}"></div>
+
+            <!-- Content Area -->
+            <div class="content-area animate-fade-in-up">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <h2>Bienvenue, <span th:text="${currentUser.prenom}">Admin</span> !</h2>
+                    <p>Voici un aperçu de l'activité globale de la plateforme de gestion des réclamations aujourd'hui.</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span class="stat-number counter-value" th:attr="data-target=${statsGlobales['total']}">0</span>
+                            <span class="stat-label">Total Réclamations</span>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-info">
+                            <span class="stat-number counter-value" th:attr="data-target=${statsGlobales['en_attente']}">0</span>
+                            <span class="stat-label">En attente</span>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-info">
+                            <span class="stat-number counter-value" th:attr="data-target=${statsGlobales['en_cours']}">0</span>
+                            <span class="stat-label">En cours</span>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-info">
+                            <span class="stat-number counter-value" th:attr="data-target=${statsGlobales['cloturees']}">0</span>
+                            <span class="stat-label">Clôturées</span>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <h4 class="mb-4 font-weight-bold">Gestion rapide</h4>
+                <div class="quick-actions-grid mb-5">
+                    <a th:href="@{/admin/utilisateurs}" class="quick-action-card">
+                        <div class="quick-action-icon-wrapper">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span class="quick-action-title">Utilisateurs</span>
+                    </a>
+                    <a th:href="@{/admin/departements}" class="quick-action-card">
+                        <div class="quick-action-icon-wrapper">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <span class="quick-action-title">Départements</span>
+                    </a>
+                    <a th:href="@{/admin/filieres}" class="quick-action-card">
+                        <div class="quick-action-icon-wrapper">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <span class="quick-action-title">Filières</span>
+                    </a>
+                    <a th:href="@{/admin/modules}" class="quick-action-card">
+                        <div class="quick-action-icon-wrapper">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <span class="quick-action-title">Modules</span>
+                    </a>
+                    <a th:href="@{/admin/categories}" class="quick-action-card">
+                        <div class="quick-action-icon-wrapper">
+                            <i class="fas fa-tags"></i>
+                        </div>
+                        <span class="quick-action-title">Catégories</span>
+                    </a>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-grid">
+                    <div class="chart-container-custom">
+                        <div class="chart-header">
+                            <h5 class="chart-title-custom">Réclamations par statut</h5>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="statutChart" data-chart-type="bar" 
+                                    th:attr="data-chart-labels=${reclamationsParStatutLabels}, data-chart-values=${reclamationsParStatutValues}"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container-custom">
+                        <div class="chart-header">
+                            <h5 class="chart-title-custom">Par Catégorie</h5>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="categorieChart" data-chart-type="doughnut" 
+                                    th:attr="data-chart-labels=${reclamationsParCategorieLabels}, data-chart-values=${reclamationsParCategorieValues}"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- App Scripts -->
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/animations.js}"></script>
+    <script th:src="@{/js/charts.js}"></script>
+    <script th:src="@{/js/notifications.js}"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - UniReclaim</title>
+    <!-- CDNs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/animations.css}">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Illustration Screen -->
+        <div class="auth-left">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="auth-left-content">
+                <div class="auth-illustration">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h1 class="auth-left-title">UniReclaim</h1>
+                <p class="auth-left-text">
+                    Plateforme intelligente de gestion et de suivi en temps réel des réclamations universitaires. Connectez-vous pour continuer.
+                </p>
+            </div>
+        </div>
+
+        <!-- Right Form Screen -->
+        <div class="auth-right">
+            <div class="auth-form-container">
+                <h2 class="auth-title">Connexion</h2>
+                <p class="auth-subtitle">Bienvenue ! Entrez vos identifiants pour continuer</p>
+
+                <!-- Feedback messages -->
+                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i> Email ou mot de passe incorrect.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
+                    <i class="fas fa-info-circle me-2"></i> Vous avez été déconnecté avec succès.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i> Inscription réussie ! Vous pouvez vous connecter.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Form -->
+                <form th:action="@{/login}" method="post">
+                    <div class="auth-input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" name="username" class="auth-input" placeholder="Adresse email" required autocomplete="email">
+                    </div>
+                    <div class="auth-input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" class="auth-input" placeholder="Mot de passe" required autocomplete="current-password">
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe">
+                            <label class="form-check-label text-secondary small" for="rememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="#" class="auth-link small">Mot de passe oublié ?</a>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Se connecter</button>
+                </form>
+
+                <div class="auth-footer-links">
+                    Pas encore de compte ? <a th:href="@{/register}" class="auth-link">Inscrivez-vous ici</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

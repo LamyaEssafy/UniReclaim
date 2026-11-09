@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traiter Réclamation - UniReclaim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/animations.css}">
+</head>
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar-enseignant :: sidebar}"></div>
+
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header('Traiter Réclamation')}"></div>
+
+            <div class="content-area animate-fade-in-up">
+                <div class="mb-4">
+                    <a th:href="@{/enseignant/reclamations}" class="btn btn-sm btn-light">
+                        <i class="fas fa-arrow-left me-1"></i> Retour à la liste
+                    </a>
+                </div>
+
+                <div class="row">
+                    <!-- Left column: Reclamation Info + Reply -->
+                    <div class="col-lg-8 mb-4">
+                        <div class="card-custom mb-4">
+                            <div class="card-header-custom d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0" th:text="${reclamation.code}">REC-XXXX</h5>
+                                <span class="badge-status" th:classappend="'badge-' + ${#strings.toLowerCase(reclamation.statut.name()).replace('_', '-')}" th:text="${reclamation.statut}">Statut</span>
+                            </div>
+                            <div class="card-body p-4">
+                                <h4 class="mb-3" th:text="${reclamation.sujet}">Sujet</h4>
+                                <p class="text-secondary small mb-4">
+                                    Déposée par <strong th:text="${reclamation.etudiant.prenom + ' ' + reclamation.etudiant.nom}">Étudiant</strong> 
+                                    le <span th:text="${#temporals.format(reclamation.dateCreation, 'dd/MM/yyyy à HH:mm')}">Date</span> 
+                                    dans la catégorie <strong th:text="${reclamation.categorie != null ? reclamation.categorie.nom : 'Aucune catégorie'}">Catégorie</strong>
+                                </p>
+                                
+                                <div class="mb-4 p-3 bg-light rounded">
+                                    <h6 class="font-weight-bold">Description :</h6>
+                                    <p class="mb-0" th:text="${reclamation.description}" style="white-space: pre-line;">Description...</p>
+                                </div>
+
+                                <!-- Attachments -->
+                                <div th:if="${not #lists.isEmpty(reclamation.piecesJointes)}">
+                                    <h6 class="font-weight-bold mb-3"><i class="fas fa-paperclip me-1"></i> Pièces jointes :</h6>
+                                    <div class="list-group mb-4">
+                                        <a th:each="pj : ${reclamation.piecesJointes}" th:href="@{/files/{filename}(filename=${pj.nomFichier})}" 
+                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" target="_blank">
+                                            <div>
+                                                <i class="far fa-file-alt text-primary me-2"></i>
+                                                <span th:text="${pj.nomOriginal}">fichier.pdf</span>
+                                            </div>
+                                            <span class="badge bg-light text-secondary rounded-pill" th:text="${#numbers.formatDecimal(pj.taille / 1024.0, 1, 1)} + ' KB'">12 KB</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Actions and response form -->
+                                <div th:if="${reclamation.statut.name() == 'AFFECTEE' || reclamation.statut.name() == 'EN_TRAITEMENT' || reclamation.statut.name() == 'REPONSE_ENSEIGNANT'}">
+                                    <h5 class="border-top pt-4 mb-3">Traiter la réclamation</h5>
+                                    
+                                    <form th:action="@{/enseignant/reclamations/{id}/repondre(id=${reclamation.id})}" method="post" class="mb-3">
+                                        <div class="mb-3">
+                                            <label class="form-label form-label-custom">Réponse / Explication pour le Chef et l'Étudiant</label>
+                                            <textarea name="contenu" rows="5" class="form-control form-control-custom" placeholder="Saisissez votre réponse explicative..." required></textarea>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="fas fa-check me-1"></i> Valider et Transmettre au Chef
+                                            </button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="collapse" data-bs-target="#rejectCollapse">
+                                                <i class="fas fa-times me-1"></i> Rejeter la demande
+                                            </button>
+                                        </div>
+                                    </form>
+
+                                    <!-- Rejection Motif Collapse -->
+                                    <div class="collapse mt-3" id="rejectCollapse">
+                                        <div class="card card-body">
+                                            <form th:action="@{/enseignant/reclamations/{id}/rejeter(id=${reclamation.id})}" method="post">
+                                                <div class="mb-3">
+                                                    <label class="form-label form-label-custom">Motif du rejet</label>
+                                                    <textarea name="motif" rows="3" class="form-control form-control-custom" placeholder="Expliquez la raison du rejet..." required></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-danger btn-sm">Confirmer le rejet</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages history -->
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <h5 class="mb-0">Réponses précédentes</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div th:each="rep : ${reponses}" class="mb-3 p-3 rounded" style="background-color: #f8fafc;">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div>
+                                            <strong th:text="${rep.auteur != null ? rep.auteur.prenom + ' ' + rep.auteur.nom : 'Système UniReclaim'}">Auteur</strong>
+                                            <span class="badge bg-secondary ms-2" th:text="${rep.auteur != null ? rep.auteur.role : 'SYSTÈME'}">ROLE</span>
+                                        </div>
+                                        <span class="text-muted small" th:text="${#temporals.format(rep.dateReponse, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                    </div>
+                                    <p class="mb-0" th:text="${rep.contenu}" style="white-space: pre-line;">Contenu...</p>
+                                </div>
+                                <div th:if="${#lists.isEmpty(reponses)}" class="text-center text-muted">
+                                    Aucun échange préalable.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Student profile info -->
+                    <div class="col-lg-4">
+                        <div class="card-custom">
+                            <div class="card-header-custom">
+                                <h5 class="mb-0">Profil de l'étudiant</h5>
+                            </div>
+                            <div class="card-body p-4 text-center">
+                                <div class="sidebar-user-avatar mx-auto mb-3" style="width: 70px; height: 70px; font-size: 1.75rem;" th:text="${reclamation.etudiant.initiale}">E</div>
+                                <h5 th:text="${reclamation.etudiant.prenom + ' ' + reclamation.etudiant.nom}">Nom</h5>
+                                <p class="text-secondary small" th:text="${reclamation.etudiant.email}">Email</p>
+                                <p class="mb-0 text-muted small" th:text="'Téléphone : ' + ${reclamation.etudiant.telephone}">Tel</p>
+                                <div class="border-top mt-3 pt-3 text-start small">
+                                    <p class="mb-1"><strong>Filière :</strong> <span th:text="${reclamation.etudiant.filiere != null ? reclamation.etudiant.filiere.nom : '-'}">Filiere</span></p>
+                                    <p class="mb-0"><strong>Département :</strong> <span th:text="${reclamation.etudiant.departement != null ? reclamation.etudiant.departement.nom : '-'}">Departement</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/notifications.js}"></script>
+</body>
+</html>

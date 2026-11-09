@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déposer une Réclamation - UniReclaim</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/animations.css}">
+</head>
+<body>
+    <div class="app-container">
+        <div th:replace="~{fragments/sidebar-etudiant :: sidebar}"></div>
+
+        <div class="main-content">
+            <div th:replace="~{fragments/header :: header('Déposer une Réclamation')}"></div>
+
+            <div class="content-area animate-fade-in-up">
+                <div class="card-custom max-width-800 mx-auto">
+                    <div class="card-header-custom">
+                        <h4 class="mb-0">Formulaire de Réclamation</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form th:action="@{/etudiant/reclamations}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label form-label-custom">Catégorie de Réclamation</label>
+                                <select name="categorieId" id="categorySelect" class="form-select form-control-custom" required>
+                                    <option value="">Sélectionnez une catégorie...</option>
+                                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.nom}">Catégorie</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3" id="moduleSelectWrapper" style="display: none;">
+                                <label class="form-label form-label-custom">Module concerné</label>
+                                <select name="moduleId" class="form-select form-control-custom">
+                                    <option value="">Sélectionnez un module...</option>
+                                    <option th:each="m : ${modules}" th:value="${m.id}" th:text="${m.nom}">Module</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label form-label-custom">Sujet / Objet</label>
+                                <input type="text" name="sujet" class="form-control form-control-custom" placeholder="Objet succinct (ex: Note erronée examen Java)" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label form-label-custom">Description détaillée</label>
+                                <textarea name="description" rows="6" class="form-control form-control-custom" placeholder="Expliquez en détail votre situation..." required></textarea>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label form-label-custom">Pièces Jointes (Optionnel, Max 10MB)</label>
+                                <input type="file" name="files" class="form-control form-control-custom" multiple>
+                                <div class="form-text">Vous pouvez sélectionner plusieurs fichiers (PDF, JPG, PNG, etc.).</div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2">
+                                <a th:href="@{/etudiant/dashboard}" class="btn btn-light">Annuler</a>
+                                <button type="submit" class="btn btn-primary-custom">
+                                    <i class="fas fa-paper-plane me-2"></i> Soumettre la réclamation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/notifications.js}"></script>
+</body>
+</html>
